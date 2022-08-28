@@ -87,6 +87,7 @@ export const OrbitAbility = {
   },
   // TODO buff other planets damage -> new Effect 'additive or multiplicative buff' with target planet?
   // TODO add buffs/debuffs directly to planet (reference)
+  // TODO we are making the solar system 3d now, should we even consider something like "nearby planets" anymore?
   jupiter: (planet: Planet, solarSystem: SolarSystem) => {
     return;
   },

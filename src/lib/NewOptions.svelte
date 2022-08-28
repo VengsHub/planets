@@ -9,6 +9,8 @@
   let options: (Planet|Moon)[] = [
     allPlanets[0], allPlanets[1], allPlanets[2]
   ];
+
+  // TODO when picking new option -> when planet push into solarSystem.planets, when moon pick planet (UI) then add moon to planet
 </script>
 
 <div class="backdrop">
@@ -38,7 +40,7 @@
     position: absolute;
     background-color: rgba(0, 0, 0, 0.5);
     width: 100%;
-    height: 100%;
+    height: 20%;
     z-index: 100;
     display: flex;
     flex-direction: column;
