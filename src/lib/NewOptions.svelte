@@ -16,7 +16,9 @@
 
 <div class="backdrop">
     {#each options as option}
-        <div class="option" on:click={() => selectedOption = option} class:selected={option === selectedOption}>
+        <div class="option"
+             on:click={() => !selectedOption ? selectedOption = option : selectedOption = undefined}
+             class:selected={option === selectedOption}>
             <div class="symbol"></div>
             <h2>{option.name}</h2>
             {#if option.rotationAbility}
