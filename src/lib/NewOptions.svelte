@@ -35,21 +35,42 @@
 <style lang="scss">
   .backdrop {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.5);
     width: 100%;
     height: 20%;
-    z-index: 100;
+    background: #222;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 16px;
     display: flex;
-    justify-content: space-evenly;
+    grid-gap: 16px;
+    justify-content: center;
     align-items: center;
 
     .option {
-      border: 2px solid rgba(255, 255, 255, 0.5);
+      height: 100%;
+      width: 12%;
+      background: linear-gradient(45deg, rgb(0, 0, 0, 0), rgb(0, 0, 0, 1));
       border-radius: 8px;
       display: flex;
       flex-direction: column;
+      align-items: center;
       color: white;
       padding: 8px;
+      box-sizing: border-box;
+
+      &:hover {
+        outline: 2px solid rgb(255, 255, 255, 0.5);
+        cursor: pointer;
+      }
+
+      &.selected {
+        outline: 2px solid rgb(255, 255, 255);
+      }
     }
   }
+
+/*  // code-snippet for linear-gradient borders
+  background: linear-gradient(#222, #222), linear-gradient(90deg, black, white);
+  background-origin: padding-box, border-box;
+  background-repeat: no-repeat;
+  border-top: 5px solid transparent;*/
 </style>
