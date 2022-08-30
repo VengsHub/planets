@@ -1,10 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { Planet, allPlanets, RotationAbility } from '../models/planet.model';
+  import { Moon } from '../models/moon.model';
 
   let sun: HTMLElement;
   let planets: {data: Planet, html?: HTMLElement}[] = allPlanets.map(planet => ({data: planet}));
   let orbits = [...Array(10).keys()];
+  export let elementToPlace: Planet|Moon;
 
   let playing = false;
 
@@ -15,6 +17,7 @@
   });
 
   // TODO let players test their solar system x seconds into the future?
+  // TODO ability to select orbit/planet?
 
   const getAngle = (basePos: {x: number, y: number}, targetPos: {x: number, y: number}): number => {
     const xDifference = targetPos.x - basePos.x;
@@ -32,7 +35,7 @@
 </script>
 
 <div class="background">
-    <button on:click={() => {playing = !playing}}>{playing ? 'Playing...' : 'Start'}</button>
+    <button on:click={() => {playing = !playing}}>{playing ? 'Playing...' : 'Start'} {elementToPlace?.name || ''}</button>
     <div class="stars">
         <div class="star"></div>
     </div>
@@ -126,10 +129,6 @@
           border: 1px solid green;
         }
 
-        &:active:hover {
-          animation-play-state: paused;
-        }
-
         .planet {
           --half-planet-size: calc(var(--planet-size) / 2);
           position: absolute;
@@ -151,7 +150,10 @@
 
       @for $i from 1 through 9 {
         .orbit:nth-of-type(#{$i}) {
-          z-index: 50 - $i;
+          // z-index: 50 - $i;
+
+          // TODO remove during fight as its only necessary for editing your solar system
+          transform: translateZ(5 - $i + px);
         }
       }
 
