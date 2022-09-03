@@ -2,11 +2,12 @@
   import { onMount } from 'svelte';
   import { Planet, allPlanets, RotationAbility } from '../models/planet.model';
   import { Moon } from '../models/moon.model';
+  import { Player } from '../models/player.model';
 
   let sun: HTMLElement;
-  let planets: {data: Planet, html?: HTMLElement}[] = allPlanets.map(planet => ({data: planet}));
-  let orbits = [...Array(10).keys()];
+  export let player: Player;
   export let elementToPlace: Planet|Moon;
+  $: hoveredOrbit = elementToPlace ? player.planets.length : -1;
 
   let playing = false;
 
@@ -17,7 +18,7 @@
   });
 
   // TODO let players test their solar system x seconds into the future?
-  // TODO ability to select orbit/planet?
+  // TODO ability to select orbit/planet? elementToPlace instanceof Moon
 
   const getAngle = (basePos: {x: number, y: number}, targetPos: {x: number, y: number}): number => {
     const xDifference = targetPos.x - basePos.x;
@@ -27,15 +28,23 @@
     return angle + 180;
   };
   const getAngleToSun = (planetPosition: {x: number, y: number}): number => getAngle(sun?.getBoundingClientRect(), planetPosition);
+  const insertElementIntoArray = (array: any[], element: any, index: number): any[] => ([
+    ...array.slice(0, index), element, ...array.slice(index)
+  ]);
+
+  $: planets = elementToPlace ? insertElementIntoArray(player.planets, elementToPlace, hoveredOrbit): player.planets;
+  $: console.log('planets', planets);
 
   $: orbitSizes = planets.map((planet, index) => {
-    const previousPlanetSizes = planets.slice(0, index).map(p => p.data.size).reduce((a, b) => a + b, 0);
-    return 160 + 20 * index + 2 * previousPlanetSizes + planet.data.size;
+    const previousPlanetSizes = planets.slice(0, index).map(p => p.size).reduce((a, b) => a + b, 0);
+    return 160 + 20 * index + 2 * previousPlanetSizes + planet.size;
   });
 </script>
 
 <div class="background">
-    <button on:click={() => {playing = !playing}}>{playing ? 'Playing...' : 'Start'} {elementToPlace?.name || ''}</button>
+    <button on:click={() => {playing = !playing}}>
+        {playing ? 'Playing...' : 'Start'} {elementToPlace?.name || ''}
+    </button>
     <div class="stars">
         <div class="star"></div>
     </div>
@@ -43,14 +52,14 @@
     <div class="planets">
         <div class="sun" bind:this={sun}></div>
 
-        {#each orbits as orbit, index}
-            {#if planets[index]}
+        {#if planets}
+            {#each planets as planet, index}
                 <div class="orbit" class:paused={!playing}
-                     style="--planet-size: {planets[index].data.size}px; --orbit-size: {orbitSizes[index]}">
-                    <div class="planet {planets[index].data.name.toLowerCase()}" class:paused={!playing} bind:this={planets[index].html}></div>
+                     style="--planet-size: {planet.size}px; --orbit-size: {orbitSizes[index]}">
+                    <div class="planet {planet.name.toLowerCase()}" class:paused={!playing}></div>
                 </div>
-            {/if}
-        {/each}
+            {/each}
+        {/if}
     </div>
 </div>
 
@@ -148,12 +157,12 @@
         }
       }
 
-      @for $i from 1 through 9 {
+      @for $i from 1 through 11 {
         .orbit:nth-of-type(#{$i}) {
           // z-index: 50 - $i;
 
           // TODO remove during fight as its only necessary for editing your solar system
-          transform: translateZ(5 - $i + px);
+          transform: translateZ(10 - $i + px);
         }
       }
 

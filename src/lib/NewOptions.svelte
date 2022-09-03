@@ -1,14 +1,24 @@
 <script lang="ts">
   import { allPlanets, Planet } from '../models/planet.model';
-  import { Moon, MoonEffectDescription } from '../models/moon.model';
+  import { allMoons, Moon, MoonEffectDescription } from '../models/moon.model';
   import { createEventDispatcher } from 'svelte';
   import { OrbitAbilityDescription, RotationAbilityDescription } from '../models/planet.model.js';
 
   const dispatch = createEventDispatcher();
 
   let options: (Planet|Moon)[] = [
-    allPlanets[0], allPlanets[1], allPlanets[2]
+    {...allPlanets[0]}, {...allPlanets[1]}, {...allMoons[0]}
   ];
+
+  // planet pick -> push to myPlanets array
+  // how to change orbits?
+  // OR on click: stick planet to mouse (& remove from option tile) and then react to dragenters?
+  // create empty most outer orbit for hover?
+  // no grab necessary, just a trail to show that it's "attached"
+
+  // moon pick -> choose planet for moon
+
+  // confirm = start next fight
 
   let selectedOption: Planet|Moon;
   $: dispatch('select', selectedOption || undefined);
@@ -17,7 +27,7 @@
 <div class="backdrop">
     {#each options as option}
         <div class="option"
-             on:click={() => !selectedOption ? selectedOption = option : selectedOption = undefined}
+             on:click={() => !selectedOption || selectedOption !== option ? selectedOption = option : selectedOption = undefined}
              class:selected={option === selectedOption}>
             <div class="symbol"></div>
             <h2>{option.name}</h2>
@@ -28,13 +38,14 @@
                 <div>{OrbitAbilityDescription[option.orbitAbility]}</div>
             {/if}
             {#if option.effect}
-                <div>{MoonEffectDescription[option.effect]}</div>
+                <div>{MoonEffectDescription[option.name]}</div>
             {/if}
         </div>
     {/each}
 </div>
 
 <style lang="scss">
+  // TODO add box shadows
   .backdrop {
     position: absolute;
     width: 100%;

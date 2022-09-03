@@ -1,4 +1,4 @@
-import type { Buff, Effect } from './planet.model';
+import { Buff, Effect } from './planet.model';
 
 export class Moon {
   constructor(public name: string,
@@ -15,3 +15,7 @@ export const MoonEffectDescription = {
   moon5: 'description',
   moon6: 'description'
 }
+
+export const allMoons: Moon[] = [
+  new Moon('moon1', new Buff(1, 'damage'))
+];

@@ -1,10 +1,10 @@
 import type { User } from './user.model';
 import type { Planet } from './planet.model';
 
-export class SolarSystem {
+export class Player {
   constructor(public owner: User,
               public health: number,
               public shield: number,
-              public planets: {planet: Planet, html?: HTMLElement}[]) {
+              public planets: Planet[]) {
   }
 }

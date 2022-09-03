@@ -1,5 +1,6 @@
 <script>
   import {supabase} from "$lib/supabaseClient"
+  import {user as session} from "$lib/sessionStore"
 
   let loading = false
   let email;
@@ -7,8 +8,10 @@
   const handleLogin = async () => {
     try {
       loading = true
-      const { error } = await supabase.auth.signIn({ email })
+      const { user, error } = await supabase.auth.signIn({ email })
       if (error) throw error
+      session.update(() => {user.email});
+
       alert('Check your email for the login link!')
     } catch (error) {
       alert(error.error_description || error.message)

@@ -1,5 +1,5 @@
-import type { SolarSystem } from './solar-system.model';
 import type { Moon } from './moon.model';
+import type { Player } from './player.model';
 
 export class Planet {
   constructor(public name: string,
@@ -17,9 +17,9 @@ export class Planet {
 }
 
 export class Buff {
-  constructor(public planet: string,
-              public amount: number,
-              public type: string) {
+  constructor(public amount: number,
+              public type: string,
+              public planet?: string) {
   }
 }
 
@@ -31,28 +31,28 @@ export class Effect {
 }
 
 export const RotationAbility = {
-  mercury: (planet: Planet, solarSystem: SolarSystem) => {
+  mercury: (planet: Planet, player: Player) => {
     planet.x--;
   },
-  venus: (planet: Planet, solarSystem: SolarSystem) => {
+  venus: (planet: Planet, player: Player) => {
     planet.x++;
   },
-  earth: (planet: Planet, solarSystem: SolarSystem) => {
+  earth: (planet: Planet, player: Player) => {
     return;
   },
-  mars: (planet: Planet, solarSystem: SolarSystem) => {
+  mars: (planet: Planet, player: Player) => {
     return new Effect(1, 'damage', 'enemy');
   },
-  jupiter: (planet: Planet, solarSystem: SolarSystem) => {
+  jupiter: (planet: Planet, player: Player) => {
     return new Effect(1, 'damage', 'self');
   },
-  saturn: (planet: Planet, solarSystem: SolarSystem) => {
+  saturn: (planet: Planet, player: Player) => {
     return new Effect(2, 'shield', 'self');
   },
-  uranus: (planet: Planet, solarSystem: SolarSystem) => {
+  uranus: (planet: Planet, player: Player) => {
     return;
   },
-  neptune: (planet: Planet, solarSystem: SolarSystem) => {
+  neptune: (planet: Planet, player: Player) => {
     return;
   }
 };
@@ -69,35 +69,35 @@ export const RotationAbilityDescription = {
 }
 
 export const OrbitAbility = {
-  mercury: (planet: Planet, solarSystem: SolarSystem) => {
+  mercury: (planet: Planet, player: Player) => {
     const x = planet.x;
     planet.x += 5;
     return new Effect(x, 'damage', 'enemy');
   },
-  venus: (planet: Planet, solarSystem: SolarSystem) => {
+  venus: (planet: Planet, player: Player) => {
     const x = planet.x;
     planet.x = 0;
     return new Effect(x * x, 'damage', 'enemy');
   },
-  earth: (planet: Planet, solarSystem: SolarSystem) => {
+  earth: (planet: Planet, player: Player) => {
     return new Effect(10, 'damage', 'enemy');
   },
-  mars: (planet: Planet, solarSystem: SolarSystem) => {
+  mars: (planet: Planet, player: Player) => {
     return;
   },
   // TODO buff other planets damage -> new Effect 'additive or multiplicative buff' with target planet?
   // TODO add buffs/debuffs directly to planet (reference)
   // TODO we are making the solar system 3d now, should we even consider something like "nearby planets" anymore?
-  jupiter: (planet: Planet, solarSystem: SolarSystem) => {
+  jupiter: (planet: Planet, player: Player) => {
     return;
   },
-  saturn: (planet: Planet, solarSystem: SolarSystem) => {
-    return new Effect(solarSystem.shield, 'damage', 'enemy');
+  saturn: (planet: Planet, player: Player) => {
+    return new Effect(player.shield, 'damage', 'enemy');
   },
-  uranus: (planet: Planet, solarSystem: SolarSystem) => {
+  uranus: (planet: Planet, player: Player) => {
     return;
   },
-  neptune: (planet: Planet, solarSystem: SolarSystem) => {
+  neptune: (planet: Planet, player: Player) => {
     return;
   }
 };
@@ -114,12 +114,12 @@ export const OrbitAbilityDescription = {
 }
 
 export const allPlanets: Planet[] = [
-    new Planet('Mercury', 10, 0, 5, 'mercury', 'mercury', 1),
-    new Planet('Venus', 20, 0, 5, 'venus', 'venus', 2),
-    new Planet('Earth', 24, 1, 5, 'earth', 'earth', 3),
-    new Planet('Mars', 12, 2, 5, 'mars', 'mars', 4),
-    new Planet('Jupiter', 80, 79, 5, 'jupiter', 'jupiter', 5),
-    new Planet('Saturn', 60, 82, 5, 'saturn', 'saturn', 6),
-    new Planet('Uranus', 40, 27, 5, 'uranus', 'uranus', 7),
-    new Planet('Neptune', 30, 14, 5, 'neptune', 'neptune', 8),
+    new Planet('Mercury', 10, 0, 5, 'mercury', 'mercury'),
+    new Planet('Venus', 20, 0, 5, 'venus', 'venus'),
+    new Planet('Earth', 24, 1, 5, 'earth', 'earth'),
+    new Planet('Mars', 12, 2, 5, 'mars', 'mars'),
+    new Planet('Jupiter', 80, 79, 5, 'jupiter', 'jupiter'),
+    new Planet('Saturn', 60, 82, 5, 'saturn', 'saturn'),
+    new Planet('Uranus', 40, 27, 5, 'uranus', 'uranus'),
+    new Planet('Neptune', 30, 14, 5, 'neptune', 'neptune'),
 ];
