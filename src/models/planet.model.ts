@@ -16,6 +16,8 @@ export class Planet {
   }
 }
 
+export const isPlanet = (element: any): element is Planet => element.moonSlots !== undefined;
+
 export class Buff {
   constructor(public amount: number,
               public type: string,

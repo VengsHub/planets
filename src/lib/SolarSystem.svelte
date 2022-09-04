@@ -1,13 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Planet, allPlanets, RotationAbility } from '../models/planet.model';
+  import { Planet, allPlanets, RotationAbility, isPlanet } from '../models/planet.model';
   import { Moon } from '../models/moon.model';
   import { Player } from '../models/player.model';
 
   let sun: HTMLElement;
   export let player: Player;
   export let elementToPlace: Planet|Moon;
-  $: hoveredOrbit = elementToPlace ? player.planets.length : -1;
+  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? player.planets.length : -1;
+  $: console.log('element', elementToPlace);
 
   let playing = false;
 
@@ -32,7 +33,7 @@
     ...array.slice(0, index), element, ...array.slice(index)
   ]);
 
-  $: planets = elementToPlace ? insertElementIntoArray(player.planets, elementToPlace, hoveredOrbit): player.planets;
+  $: planets = elementToPlace && isPlanet(elementToPlace) ? insertElementIntoArray(player.planets, elementToPlace, hoveredOrbit): player.planets;
   $: console.log('planets', planets);
 
   $: orbitSizes = planets.map((planet, index) => {
