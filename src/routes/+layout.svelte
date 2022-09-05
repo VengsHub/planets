@@ -1,6 +1,6 @@
 <script>
   import '../app.scss';
-  import {user} from "$lib/sessionStore"
+  import {user} from "$lib/stores"
   import {supabase} from "$lib/supabaseClient"
   import Auth from "$lib/Auth.svelte"
 

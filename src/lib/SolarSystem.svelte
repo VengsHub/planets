@@ -2,13 +2,22 @@
   import { onMount } from 'svelte';
   import { Planet, allPlanets, RotationAbility, isPlanet } from '../models/planet.model';
   import { Moon } from '../models/moon.model';
+  import { player } from '$lib/stores';
   import { Player } from '../models/player.model';
+  import {get} from 'svelte/store'
 
   let sun: HTMLElement;
-  export let player: Player;
+  let planets: Planet[] = [];
   export let elementToPlace: Planet|Moon;
-  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? player.planets.length : -1;
+  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? get(player).planets.length : -1;
   $: console.log('element', elementToPlace);
+
+  player.subscribe(player => {
+    console.log('player', player);
+    if (player) {
+      planets = elementToPlace && isPlanet(elementToPlace) ? insertElementIntoArray(player.planets, elementToPlace, hoveredOrbit) : player.planets;
+    }
+  });
 
   let playing = false;
 
@@ -19,7 +28,6 @@
   });
 
   // TODO let players test their solar system x seconds into the future?
-  // TODO ability to select orbit/planet? elementToPlace instanceof Moon
 
   const getAngle = (basePos: {x: number, y: number}, targetPos: {x: number, y: number}): number => {
     const xDifference = targetPos.x - basePos.x;
@@ -33,8 +41,16 @@
     ...array.slice(0, index), element, ...array.slice(index)
   ]);
 
-  $: planets = elementToPlace && isPlanet(elementToPlace) ? insertElementIntoArray(player.planets, elementToPlace, hoveredOrbit): player.planets;
   $: console.log('planets', planets);
+
+  const clickOrbit = (planet: Planet) => {
+    if (elementToPlace) {
+      // TODO write method to only update planets of store
+      player.update(player => ({...player, planets} as Player));
+    } else {
+      elementToPlace = planet;
+    }
+  };
 
   $: orbitSizes = planets.map((planet, index) => {
     const previousPlanetSizes = planets.slice(0, index).map(p => p.size).reduce((a, b) => a + b, 0);
@@ -56,7 +72,8 @@
         {#if planets}
             {#each planets as planet, index}
                 <div class="orbit" class:paused={!playing}
-                     style="--planet-size: {planet.size}px; --orbit-size: {orbitSizes[index]}">
+                     style="--planet-size: {planet.size}px; --orbit-size: {orbitSizes[index]}"
+                     on:click={() => clickOrbit(planet)}>
                     <div class="planet {planet.name.toLowerCase()}" class:paused={!playing}></div>
                 </div>
             {/each}
