@@ -7,18 +7,11 @@
   import {get} from 'svelte/store'
 
   let sun: HTMLElement;
-  let planets: Planet[] = [];
+  let planets: Planet[] = get(player).planets;
   export let elementToPlace: Planet|Moon;
-  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? get(player).planets.length : -1;
   $: console.log('planets', planets);
   $: console.log('element', elementToPlace);
-
-  player.subscribe(player => {
-    console.log('player', player);
-    if (player) {
-      planets = elementToPlace && isPlanet(elementToPlace) ? insertElementIntoArray(player.planets, elementToPlace, hoveredOrbit) : player.planets;
-    }
-  });
+  $: console.log('planets', planets);
 
   let playing = false;
 
@@ -30,28 +23,22 @@
 
   // TODO let players test their solar system x seconds into the future?
 
-  const getAngle = (basePos: {x: number, y: number}, targetPos: {x: number, y: number}): number => {
-    const xDifference = targetPos.x - basePos.x;
-    const yDifference = targetPos.y - basePos.y;
-    const radians = Math.atan2(yDifference, xDifference);
-    const angle = radians * (180 / Math.PI);
-    return angle + 180;
-  };
-  const getAngleToSun = (planetPosition: {x: number, y: number}): number => getAngle(sun?.getBoundingClientRect(), planetPosition);
   const insertElementIntoArray = (array: any[], element: any, index: number): any[] => ([
     ...array.slice(0, index), element, ...array.slice(index)
   ]);
-
-  $: console.log('planets', planets);
 
   const clickOrbit = (planet: Planet) => {
     if (elementToPlace) {
       // TODO write method to only update planets of store
       player.update(player => ({...player, planets} as Player));
+      elementToPlace = undefined;
     } else {
       elementToPlace = planet;
     }
   };
+
+  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? get(player).planets.length : -1;
+  $: planets = elementToPlace && isPlanet(elementToPlace) ? insertElementIntoArray(get(player).planets, elementToPlace, hoveredOrbit) : get(player).planets;
 
   $: orbitSizes = planets.map((planet, index) => {
     const previousPlanetSizes = planets.slice(0, index).map(p => p.size).reduce((a, b) => a + b, 0);
