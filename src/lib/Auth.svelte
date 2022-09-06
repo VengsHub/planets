@@ -1,7 +1,5 @@
 <script>
   import {supabase} from "$lib/supabaseClient"
-  import {user as session, player} from "$lib/stores"
-  import {Player} from "../models/player.model";
 
   let loading = false
   let email;
@@ -9,10 +7,8 @@
   const handleLogin = async () => {
     try {
       loading = true
-      const { user, error } = await supabase.auth.signIn({ email })
+      const { error } = await supabase.auth.signIn({ email })
       if (error) throw error
-      session.update(() => {user.email});
-      player.update(() => new Player({email: user.email}, 100, 0, []));
 
       alert('Check your email for the login link!')
     } catch (error) {

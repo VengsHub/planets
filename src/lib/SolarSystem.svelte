@@ -10,6 +10,7 @@
   let planets: Planet[] = [];
   export let elementToPlace: Planet|Moon;
   $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? get(player).planets.length : -1;
+  $: console.log('planets', planets);
   $: console.log('element', elementToPlace);
 
   player.subscribe(player => {
