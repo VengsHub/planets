@@ -4,7 +4,7 @@
   import { Moon } from '../models/moon.model';
   import { player } from '$lib/stores';
   import { Player } from '../models/player.model';
-  import {get} from 'svelte/store'
+  import { get } from 'svelte/store';
 
   let sun: HTMLElement;
   let planets: Planet[] = get(player).planets;
@@ -61,9 +61,12 @@
             {#each planets as planet, index}
                 <div class="orbit" class:paused={!playing}
                      style="--planet-size: {planet.size}px; --orbit-size: {orbitSizes[index]}"
-                     on:mouseenter={() => hoveredOrbit = index}
+                     on:mouseenter={() => {planet.orbit = index; hoveredOrbit = index;}}
                      on:click={() => clickOrbit(planet)}>
-                    <div class="planet {planet.name.toLowerCase()}" class:paused={!playing}></div>
+                    <div class="planet {planet.name.toLowerCase()}"
+                         class:highlight={elementToPlace && index === hoveredOrbit}
+                         class:paused={!playing}>
+                    </div>
                 </div>
             {/each}
         {/if}
@@ -160,6 +163,12 @@
 
           &.paused {
             animation-play-state: paused !important;
+          }
+
+          &.highlight {
+            box-shadow: 0 0 20px #fff, /* outer white */
+            -5px 0 30px #f0f, /* outer left magenta */
+            5px 0 30px #0ff; /* outer right cyan */
           }
         }
       }

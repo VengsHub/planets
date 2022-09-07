@@ -7,7 +7,7 @@
   const dispatch = createEventDispatcher();
 
   let options: (Planet|Moon)[] = [
-    {...allPlanets[0]}, {...allPlanets[1]}, {...allMoons[0]}
+    {...allPlanets[1]}, {...allPlanets[2]}, {...allMoons[0]}
   ];
 
   // planet pick -> push to myPlanets array
