@@ -11,7 +11,7 @@
   export let elementToPlace: Planet|Moon;
   $: console.log('planets', planets);
   $: console.log('element', elementToPlace);
-  $: console.log('planets', planets);
+  $: console.log('hovered orbit', hoveredOrbit);
 
   let playing = false;
 
@@ -37,7 +37,7 @@
     }
   };
 
-  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? get(player).planets.length : -1;
+  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? elementToPlace.orbit || get(player).planets.length : -1;
   $: planets = elementToPlace && isPlanet(elementToPlace) ? insertElementIntoArray(get(player).planets, elementToPlace, hoveredOrbit) : get(player).planets;
 
   $: orbitSizes = planets.map((planet, index) => {
@@ -61,6 +61,7 @@
             {#each planets as planet, index}
                 <div class="orbit" class:paused={!playing}
                      style="--planet-size: {planet.size}px; --orbit-size: {orbitSizes[index]}"
+                     on:mouseenter={() => hoveredOrbit = index}
                      on:click={() => clickOrbit(planet)}>
                     <div class="planet {planet.name.toLowerCase()}" class:paused={!playing}></div>
                 </div>
