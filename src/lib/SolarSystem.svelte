@@ -174,9 +174,7 @@
       }
 
       @for $i from 1 through 11 {
-        .orbit:nth-of-type(#{$i}) {
-          // z-index: 50 - $i;
-
+        .paused:nth-of-type(#{$i}) {
           // TODO remove during fight as its only necessary for editing your solar system
           transform: translateZ(10 - $i + px);
         }
