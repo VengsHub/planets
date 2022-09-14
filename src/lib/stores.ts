@@ -5,3 +5,4 @@ import type { Player } from '../models/player.model';
 export const user = writable<User>(undefined);
 
 export const player = writable<Player>(undefined);
+export const otherPlayers = writable<Player[]>([]);

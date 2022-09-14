@@ -2,7 +2,7 @@
   import { allPlanets, Planet } from '../models/planet.model';
   import { allMoons, Moon, MoonEffectDescription } from '../models/moon.model';
   import { createEventDispatcher } from 'svelte';
-  import { OrbitAbilityDescription, RotationAbilityDescription } from '../models/planet.model.js';
+  import { AbilityDescription } from '../models/planet.model.js';
 
   const dispatch = createEventDispatcher();
 
@@ -31,11 +31,8 @@
              class:selected={option === selectedOption}>
             <div class="symbol"></div>
             <h2>{option.name}</h2>
-            {#if option.rotationAbility}
-                <div>{RotationAbilityDescription[option.rotationAbility]}</div>
-            {/if}
-            {#if option.orbitAbility}
-                <div>{OrbitAbilityDescription[option.orbitAbility]}</div>
+            {#if option.ability}
+                <div>{AbilityDescription[option.rotationAbility]}</div>
             {/if}
             {#if option.effect}
                 <div>{MoonEffectDescription[option.name]}</div>
@@ -62,6 +59,7 @@
       height: 100%;
       width: 12%;
       background: linear-gradient(45deg, rgb(0, 0, 0, 0), rgb(0, 0, 0, 1));
+      border: 1px solid rgb(255, 255, 255, 0.5);
       border-radius: 8px;
       display: flex;
       flex-direction: column;

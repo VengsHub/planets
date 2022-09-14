@@ -1,14 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Planet, allPlanets, RotationAbility, isPlanet } from '../models/planet.model';
+  import { Planet, allPlanets, Ability, isPlanet } from '../models/planet.model';
   import { Moon } from '../models/moon.model';
-  import { player } from '$lib/stores';
+  import { player, otherPlayers } from '$lib/stores';
   import { Player } from '../models/player.model';
-  import { get } from 'svelte/store';
 
   let sun: HTMLElement;
-  let planets: Planet[] = get(player).planets;
+  let planets: Planet[] = $player.planets;
   export let elementToPlace: Planet|Moon;
+  $: console.log('player', $player);
+  $: console.log('other players', $otherPlayers);
   $: console.log('planets', planets);
   $: console.log('element', elementToPlace);
   $: console.log('hovered orbit', hoveredOrbit);
@@ -17,7 +18,7 @@
 
   onMount(() => {
     console.log('before', allPlanets[0].x);
-    RotationAbility[allPlanets[0].rotationAbility](allPlanets[0]);
+    Ability[allPlanets[0].ability](allPlanets[0]);
     console.log('after', allPlanets[0].x);
   });
 
@@ -30,15 +31,14 @@
   const clickOrbit = (planet: Planet) => {
     if (elementToPlace) {
       // TODO write method to only update planets of store
+      // TODO update player in db
       player.update(player => ({...player, planets} as Player));
       elementToPlace = undefined;
-    } else {
-      elementToPlace = planet;
     }
   };
 
-  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? elementToPlace.orbit || get(player).planets.length : -1;
-  $: planets = elementToPlace && isPlanet(elementToPlace) ? insertElementIntoArray(get(player).planets, elementToPlace, hoveredOrbit) : get(player).planets;
+  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? elementToPlace.orbit || $player.planets.length : -1;
+  $: planets = elementToPlace && isPlanet(elementToPlace) ? insertElementIntoArray($player.planets, elementToPlace, hoveredOrbit) : $player.planets;
 
   $: orbitSizes = planets.map((planet, index) => {
     const previousPlanetSizes = planets.slice(0, index).map(p => p.size).reduce((a, b) => a + b, 0);

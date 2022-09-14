@@ -3,8 +3,25 @@
   import NewOptions from '$lib/NewOptions.svelte';
   import { Planet } from '../models/planet.model';
   import { Moon } from '../models/moon.model';
+  import { supabase } from '$lib/supabaseClient';
+  import { otherPlayers, player } from '$lib/stores';
 
   let elementToPlace: Planet|Moon;
+
+  supabase.from('players').select("*").then(({data: players, error}) => {
+    if (error) {
+      throw error;
+    }
+
+    const myPlayer = players.find(player => player.email === 'mischa@koischwitz.de');
+    const others = players.filter(player => player.email !== 'mischa@koischwitz.de');
+    player.set(myPlayer);
+    otherPlayers.set(others);
+  });
+
+  supabase.from('players').on('*', payload => {
+    console.log('changes received', payload);
+  });
 </script>
 
 <SolarSystem elementToPlace={elementToPlace}></SolarSystem>
