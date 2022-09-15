@@ -179,46 +179,6 @@
           transform: translateZ(10 - $i + px);
         }
       }
-
-      .mercury {
-        background: linear-gradient(90deg, #453217, darken(#453217, 7%));
-        box-shadow: inset 7px 0px 0px darken(#453217, 7%);
-      }
-
-      .venus {
-        background: linear-gradient(90deg, #AC6339, darken(#AC6339, 7%));
-        box-shadow: inset 7px 0px 0px darken(#AC6339, 12%);
-      }
-
-      .earth {
-        background: linear-gradient(90deg, #3E8EBB, darken(#3E8EBB, 7%));
-        box-shadow: inset 7px 0px 0px darken(#3E8EBB, 12%);
-      }
-
-      .mars {
-        background: linear-gradient(90deg, #6F3125, darken(#6F3125, 7%));
-        box-shadow: inset 7px 0px 0px darken(#6F3125, 9%);
-      }
-
-      .jupiter {
-        background: linear-gradient(90deg, #3D2C14, darken(#3D2C14, 7%));
-        box-shadow: inset 7px 0px 0px darken(#3D2C14, 5%);
-      }
-
-      .saturn {
-        background: linear-gradient(90deg, #E97340, darken(#E97340, 7%));
-        box-shadow: inset 7px 0px 0px darken(#E97340, 14%);
-      }
-
-      .uranus {
-        background: linear-gradient(90deg, #337799, darken(#337799, 7%));
-        box-shadow: inset 7px 0px 0px darken(#337799, 12%);
-      }
-
-      .neptune {
-        background: linear-gradient(90deg, #6ACDC0, darken(#6ACDC0, 7%));
-        box-shadow: inset 7px 0px 0px darken(#6ACDC0, 17%);
-      }
     }
   }
 
