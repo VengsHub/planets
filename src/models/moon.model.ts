@@ -1,8 +1,8 @@
-import { Buff, Effect } from './planet.model';
 
 export class Moon {
   constructor(public name: string,
-              public effect: Effect | Buff,
+              public effect: number,
+              public price: number,
               public planet?: string) {
   }
 }
@@ -17,5 +17,5 @@ export const MoonEffectDescription = {
 }
 
 export const allMoons: Moon[] = [
-  new Moon('moon1', new Buff(1, 'damage'))
+  new Moon('moon1', 1, 5)
 ];

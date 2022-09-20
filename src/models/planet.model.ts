@@ -7,54 +7,40 @@ export class Planet {
               public moonSlots: number,
               public rotationTime: number,
               public ability: string,
+              public price: number,
               public orbit?: number,
               public x = 0,
-              public startingAngle = 0,
-              public moons: Moon[] = [],
-              public buffs: Buff[] = []) {
+              public moons: Moon[] = []) {
   }
 }
 
 export const isPlanet = (element: any): element is Planet => element.moonSlots !== undefined;
 
-export class Buff {
-  constructor(public amount: number,
-              public type: string,
-              public planet?: string) {
-  }
-}
-
-export class Effect {
-  constructor(public amount: number,
-              public type: 'damage'|'heal'|'shield'|'poison',
-              public target: 'self'|'enemy') {
-  }
-}
-
 export const Ability = {
-  mercury: (planet: Planet, player: Player) => {
-    planet.x--;
+  mercury: (planet: Planet, player: Player): number => {
+    return 1;
   },
-  venus: (planet: Planet, player: Player) => {
+  venus: (planet: Planet, player: Player): number => {
     planet.x++;
+    return planet.x;
   },
-  earth: (planet: Planet, player: Player) => {
-    return;
+  earth: (planet: Planet, player: Player): number => {
+    return player.planets.findIndex(p => p.name === planet.name);
   },
-  mars: (planet: Planet, player: Player) => {
-    return new Effect(1, 'damage', 'enemy');
+  mars: (planet: Planet, player: Player): number => {
+    return 1;
   },
-  jupiter: (planet: Planet, player: Player) => {
-    return new Effect(1, 'damage', 'self');
+  jupiter: (planet: Planet, player: Player): number => {
+    return 1;
   },
-  saturn: (planet: Planet, player: Player) => {
-    return new Effect(2, 'shield', 'self');
+  saturn: (planet: Planet, player: Player): number => {
+    return 1;
   },
-  uranus: (planet: Planet, player: Player) => {
-    return;
+  uranus: (planet: Planet, player: Player): number => {
+    return 1;
   },
-  neptune: (planet: Planet, player: Player) => {
-    return;
+  neptune: (planet: Planet, player: Player): number => {
+    return 1;
   }
 };
 
@@ -70,12 +56,12 @@ export const AbilityDescription = {
 }
 
 export const allPlanets: Planet[] = [
-    new Planet('Mercury', 10, 0, 5, 'mercury'),
-    new Planet('Venus', 20, 0, 5, 'venus'),
-    new Planet('Earth', 24, 1, 5, 'earth'),
-    new Planet('Mars', 12, 2, 5, 'mars'),
-    new Planet('Jupiter', 80, 79, 5, 'jupiter'),
-    new Planet('Saturn', 60, 82, 5, 'saturn'),
-    new Planet('Uranus', 40, 27, 5, 'uranus'),
-    new Planet('Neptune', 30, 14, 5, 'neptune'),
+    new Planet('Mercury', 10, 0, 5, 'mercury', 10),
+    new Planet('Venus', 20, 0, 5, 'venus', 20),
+    new Planet('Earth', 24, 1, 5, 'earth', 30),
+    new Planet('Mars', 12, 2, 5, 'mars', 40),
+    new Planet('Jupiter', 80, 79, 5, 'jupiter', 50),
+    new Planet('Saturn', 60, 82, 5, 'saturn', 60),
+    new Planet('Uranus', 40, 27, 5, 'uranus', 70),
+    new Planet('Neptune', 30, 14, 5, 'neptune', 80),
 ];

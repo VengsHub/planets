@@ -6,9 +6,7 @@
 
   const dispatch = createEventDispatcher();
 
-  let options: (Planet|Moon)[] = [
-    {...allPlanets[1]}, {...allPlanets[2]}, {...allMoons[0]}
-  ];
+  let options: (Planet|Moon)[] = [...allPlanets];
 
   // planet pick -> push to myPlanets array
   // how to change orbits?
@@ -29,14 +27,15 @@
         <div class="option"
              on:click={() => !selectedOption || selectedOption !== option ? selectedOption = option : selectedOption = undefined}
              class:selected={option === selectedOption}>
-            <div class="symbol"></div>
+            <span>Price: {option.price}</span>
             <h2>{option.name}</h2>
             {#if option.ability}
-                <div>{AbilityDescription[option.rotationAbility]}</div>
+                <div>{AbilityDescription[option.ability]}</div>
             {/if}
             {#if option.effect}
                 <div>{MoonEffectDescription[option.name]}</div>
             {/if}
+            <div class="symbol"></div>
         </div>
     {/each}
 </div>
