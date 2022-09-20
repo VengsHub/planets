@@ -14,7 +14,7 @@
   $: console.log('element', elementToPlace);
   $: console.log('hovered orbit', hoveredOrbit);
 
-  let playing = false;
+  let playing = true;
 
   onMount(() => {
     console.log('before', allPlanets[0].x);
@@ -60,7 +60,7 @@
         {#if planets}
             {#each planets as planet, index}
                 <div class="orbit" class:paused={!playing}
-                     style="--planet-size: {planet.size}px; --orbit-size: {orbitSizes[index]}"
+                     style="--planet-size: {planet.size}px; --orbit-size: {orbitSizes[index]}; --index: {10 - index}px"
                      on:mouseenter={() => {planet.orbit = index; hoveredOrbit = index;}}
                      on:click={() => clickOrbit(planet)}>
                     <div class="planet {planet.name.toLowerCase()}"
@@ -172,13 +172,6 @@
           }
         }
       }
-
-      @for $i from 1 through 11 {
-        .paused:nth-of-type(#{$i}) {
-          // TODO remove during fight as its only necessary for editing your solar system
-          transform: translateZ(10 - $i + px);
-        }
-      }
     }
   }
 
@@ -197,8 +190,11 @@
 
   // Gravitational Pull
   @keyframes gravity {
+    from {
+      transform: translateZ(var(--index)) rotate(0deg);
+    }
     to {
-      transform: rotate(360deg);
+      transform: translateZ(var(--index)) rotate(360deg);
     }
   }
 
