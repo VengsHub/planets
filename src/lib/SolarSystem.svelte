@@ -1,16 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Planet, allPlanets, Ability, isPlanet } from '../models/planet.model';
+  import { Planet, allPlanets, Ability } from '../models/planet.model';
   import { Moon } from '../models/moon.model';
   import { player, otherPlayers } from '$lib/stores';
   import { Player } from '../models/player.model';
 
   let sun: HTMLElement;
-  let planets: {planet: Planet, html?: HTMLElement}[] = $player.planets.map(planet => ({planet}));
   export let elementToPlace: Planet|Moon;
+  let hoveredOrbit = -1;
   $: console.log('player', $player);
   $: console.log('other players', $otherPlayers);
-  $: console.log('planets', planets);
   $: console.log('element', elementToPlace);
   $: console.log('hovered orbit', hoveredOrbit);
 
@@ -27,32 +26,22 @@
   const clickOrbit = (planet: {planet: Planet, html?: HTMLElement}) => {
     if (elementToPlace) {
       // TODO update player in db
-      player.update(player => ({...player, planets} as Player));
+      player.update(player => ({...player, planets: player.planets} as Player));
       elementToPlace = undefined;
     }
   };
 
-  const updatePlanets = (elementToInsert: Planet | Moon) => {
-    const reformattedPlanets = $player.planets.map(planet => ({planet}));
-    if (elementToInsert && isPlanet(elementToInsert)) {
-      planets = insertElementIntoArray(reformattedPlanets, {planet: elementToInsert}, hoveredOrbit);
-    } else {
-      planets = reformattedPlanets;
-    }
-  }
-
   const consoleLog = () => console.log('log');
 
-  $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? elementToPlace.orbit || $player.planets.length : -1;
-  $: if ($player && hoveredOrbit) updatePlanets(elementToPlace);
-  $: planets.forEach(planet => {
+  $: $player.planets.forEach(planet => {
     if (planet.html) {
+      console.log('add event listener for', planet.planet.name);
       planet.html.addEventListener('animationiteration', consoleLog);
     }
   });
 
-  $: orbitSizes = planets.map((planet, index) => {
-    const previousPlanetSizes = planets.slice(0, index).map(p => p.planet.size).reduce((a, b) => a + b, 0);
+  $: orbitSizes = $player.planets.map((planet, index) => {
+    const previousPlanetSizes = $player.planets.slice(0, index).map(p => p.planet.size).reduce((a, b) => a + b, 0);
     return 160 + 20 * index + 2 * previousPlanetSizes + planet.planet.size;
   });
 </script>
@@ -68,14 +57,13 @@
     <div class="planets">
         <div class="sun" bind:this={sun}></div>
 
-        {#if planets}
-            {#each planets as planet, index}
+        {#if $player.planets}
+            {#each $player.planets as planet, index}
                 <div class="orbit" class:paused={!playing} bind:this={planet.html}
                      style="--planet-size: {planet.planet.size}px; --orbit-size: {orbitSizes[index]}; --index: {10 - index}px"
                      on:mouseenter={() => {planet.planet.orbit = index; hoveredOrbit = index;}}
                      on:click={() => clickOrbit(planet)}>
                     <div class="planet {planet.planet.name.toLowerCase()}"
-                         class:highlight={elementToPlace && index === hoveredOrbit}
                          class:paused={!playing}>
                     </div>
                 </div>
@@ -157,6 +145,14 @@
 
         &:hover {
           border: 1px solid green;
+          box-shadow: inset 0 0 5px #fff, /* inner white */
+          inset 2px 0 8px #f0f, /* inner left magenta short */
+          inset -2px 0 8px #0ff, /* inner right cyan short */
+          inset 2px 0 30px #f0f, /* inner left magenta broad */
+          inset -2px 0 30px #0ff, /* inner right cyan broad */
+          0 0 5px #fff, /* outer white */
+          -5px 0 10px #f0f, /* outer left magenta */
+          5px 0 10px #0ff; /* outer right cyan */
         }
 
         .planet {
@@ -174,12 +170,6 @@
 
           &.paused {
             animation-play-state: paused !important;
-          }
-
-          &.highlight {
-            box-shadow: 0 0 5px #fff, /* outer white */
-            -5px 0 10px #f0f, /* outer left magenta */
-            5px 0 10px #0ff; /* outer right cyan */
           }
         }
       }

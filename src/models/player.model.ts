@@ -4,6 +4,6 @@ import type { Planet } from './planet.model';
 export class Player {
   constructor(public user: User,
               public points: number,
-              public planets: Planet[]) {
+              public planets: {planet: Planet, html?: HTMLElement}[]) {
   }
 }
