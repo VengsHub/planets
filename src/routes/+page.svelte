@@ -4,7 +4,8 @@
   import { allPlanets, Planet } from '../models/planet.model';
   import { Moon } from '../models/moon.model';
   import { supabase } from '$lib/supabaseClient';
-  import { otherPlayers, player } from '$lib/stores';
+  import { user, otherPlayers, player } from '$lib/stores';
+  import { Player } from '../models/player.model';
 
   let elementToPlace: Planet|Moon;
 
@@ -13,15 +14,11 @@
       throw error;
     }
 
-    const myPlayer = players.find(player => player.email === 'mischa@koischwitz.de');
-    const others = players.filter(player => player.email !== 'mischa@koischwitz.de');
+    const myPlayer = players.find(player => player.email === $user.email);
+    const others = players.filter(player => player.email !== $user.email);
     myPlayer.planets = allPlanets;
-    player.set(myPlayer);
+    player.update(player => ({...player, planets: myPlayer.planets} as Player));
     otherPlayers.set(others);
-  });
-
-  supabase.from('players').on('*', payload => {
-    console.log('changes received', payload);
   });
 </script>
 

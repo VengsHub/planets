@@ -6,7 +6,7 @@
   import { Player } from '../models/player.model';
 
   let sun: HTMLElement;
-  let planets: Planet[] = $player.planets;
+  let planets: {planet: Planet, html?: HTMLElement}[] = $player.planets.map(planet => ({planet}));
   export let elementToPlace: Planet|Moon;
   $: console.log('player', $player);
   $: console.log('other players', $otherPlayers);
@@ -17,32 +17,43 @@
   let playing = true;
 
   onMount(() => {
-    console.log('before', allPlanets[0].x);
     Ability[allPlanets[0].ability](allPlanets[0]);
-    console.log('after', allPlanets[0].x);
   });
-
-  // TODO let players test their solar system x seconds into the future?
 
   const insertElementIntoArray = (array: any[], element: any, index: number): any[] => ([
     ...array.slice(0, index), element, ...array.slice(index)
   ]);
 
-  const clickOrbit = (planet: Planet) => {
+  const clickOrbit = (planet: {planet: Planet, html?: HTMLElement}) => {
     if (elementToPlace) {
-      // TODO write method to only update planets of store
       // TODO update player in db
       player.update(player => ({...player, planets} as Player));
       elementToPlace = undefined;
     }
   };
 
+  const updatePlanets = (elementToInsert: Planet | Moon) => {
+    const reformattedPlanets = $player.planets.map(planet => ({planet}));
+    if (elementToInsert && isPlanet(elementToInsert)) {
+      planets = insertElementIntoArray(reformattedPlanets, {planet: elementToInsert}, hoveredOrbit);
+    } else {
+      planets = reformattedPlanets;
+    }
+  }
+
+  const consoleLog = () => console.log('log');
+
   $: hoveredOrbit = elementToPlace && isPlanet(elementToPlace) ? elementToPlace.orbit || $player.planets.length : -1;
-  $: planets = elementToPlace && isPlanet(elementToPlace) ? insertElementIntoArray($player.planets, elementToPlace, hoveredOrbit) : $player.planets;
+  $: if ($player && hoveredOrbit) updatePlanets(elementToPlace);
+  $: planets.forEach(planet => {
+    if (planet.html) {
+      planet.html.addEventListener('animationiteration', consoleLog);
+    }
+  });
 
   $: orbitSizes = planets.map((planet, index) => {
-    const previousPlanetSizes = planets.slice(0, index).map(p => p.size).reduce((a, b) => a + b, 0);
-    return 160 + 20 * index + 2 * previousPlanetSizes + planet.size;
+    const previousPlanetSizes = planets.slice(0, index).map(p => p.planet.size).reduce((a, b) => a + b, 0);
+    return 160 + 20 * index + 2 * previousPlanetSizes + planet.planet.size;
   });
 </script>
 
@@ -59,11 +70,11 @@
 
         {#if planets}
             {#each planets as planet, index}
-                <div class="orbit" class:paused={!playing}
-                     style="--planet-size: {planet.size}px; --orbit-size: {orbitSizes[index]}; --index: {10 - index}px"
-                     on:mouseenter={() => {planet.orbit = index; hoveredOrbit = index;}}
+                <div class="orbit" class:paused={!playing} bind:this={planet.html}
+                     style="--planet-size: {planet.planet.size}px; --orbit-size: {orbitSizes[index]}; --index: {10 - index}px"
+                     on:mouseenter={() => {planet.planet.orbit = index; hoveredOrbit = index;}}
                      on:click={() => clickOrbit(planet)}>
-                    <div class="planet {planet.name.toLowerCase()}"
+                    <div class="planet {planet.planet.name.toLowerCase()}"
                          class:highlight={elementToPlace && index === hoveredOrbit}
                          class:paused={!playing}>
                     </div>
@@ -166,9 +177,9 @@
           }
 
           &.highlight {
-            box-shadow: 0 0 20px #fff, /* outer white */
-            -5px 0 30px #f0f, /* outer left magenta */
-            5px 0 30px #0ff; /* outer right cyan */
+            box-shadow: 0 0 5px #fff, /* outer white */
+            -5px 0 10px #f0f, /* outer left magenta */
+            5px 0 10px #0ff; /* outer right cyan */
           }
         }
       }
