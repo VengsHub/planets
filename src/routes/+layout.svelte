@@ -5,12 +5,12 @@
   import Auth from "$lib/Auth.svelte"
 
   user.set(supabase.auth.user());
-  $player = {email: supabase.auth.user.email, planets: []};
+  $: if ($user) $player = {user: {email: $user.email}, planets: []};
 
   supabase.auth.onAuthStateChange((_, session) => {
     user.set(session.user);
-    if ($player) {
-      $player.email = supabase.auth.user.email;
+    if ($player && $user) {
+      $player.user.email = $user.email;
     }
   })
 </script>

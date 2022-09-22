@@ -3,7 +3,7 @@
   import { Planet, allPlanets, Ability } from '../models/planet.model';
   import { Moon } from '../models/moon.model';
   import { player, otherPlayers } from '$lib/stores';
-  import { Player } from '../models/player.model';
+  import { supabase } from './supabaseClient';
 
   let sun: HTMLElement;
   export let elementToPlace: Planet|Moon;
@@ -17,6 +17,7 @@
 
   onMount(() => {
     Ability[allPlanets[0].ability](allPlanets[0]);
+    setInterval(updateDatabase, 60 * 1000);
   });
 
   const insertElementIntoArray = (array: any[], element: any, index: number): any[] => ([
@@ -25,18 +26,34 @@
 
   const clickOrbit = (planet: {planet: Planet, html?: HTMLElement}) => {
     if (elementToPlace) {
-      // TODO update player in db
-      player.update(player => ({...player, planets: player.planets} as Player));
+      $player.planets[hoveredOrbit] = planet;
       elementToPlace = undefined;
+      hoveredOrbit = -1;
     }
   };
 
-  const consoleLog = () => console.log('log');
+  const triggerPlanetAbility = (planet: {planet: Planet, html?: HTMLElement}) => {
+    $player.points += Ability[planet.planet.ability](planet, $player);
+  };
+
+  const updateDatabase = async () => {
+    if ($player.user.email) {
+      const {data, error} = await supabase.from('players')
+      .update({planets: $player.planets.map(planet => planet.planet), points: $player.points})
+      .eq('email', $player.user.email);
+
+      if (error) {
+        throw error;
+      }
+
+      console.log('updated data', data);
+    }
+  };
 
   $: $player.planets.forEach(planet => {
     if (planet.html) {
       console.log('add event listener for', planet.planet.name);
-      planet.html.addEventListener('animationiteration', consoleLog);
+      // planet.html.addEventListener('animationiteration', () => triggerPlanetAbility(planet));
     }
   });
 

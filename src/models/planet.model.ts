@@ -25,7 +25,7 @@ export const Ability = {
     return planet.x;
   },
   earth: (planet: Planet, player: Player): number => {
-    return player.planets.findIndex(p => p.name === planet.name);
+    return player.planets.findIndex(p => p.planet.name === planet.name);
   },
   mars: (planet: Planet, player: Player): number => {
     return 1;
