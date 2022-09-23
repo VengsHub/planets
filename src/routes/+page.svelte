@@ -16,6 +16,7 @@
     const myPlayer = players.find(player => player.email === $user.email);
     const others = players.filter(player => player.email !== $user.email);
     $player.planets = myPlayer.planets.map(planet => ({planet}));
+    $player.points = myPlayer.points;
     otherPlayers.set(others);
   });
 </script>

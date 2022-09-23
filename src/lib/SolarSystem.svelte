@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Planet, allPlanets, Ability } from '../models/planet.model';
+  import { Planet, allPlanets, Ability, isPlanet } from '../models/planet.model';
   import { Moon } from '../models/moon.model';
   import { player, otherPlayers } from '$lib/stores';
   import { supabase } from './supabaseClient';
@@ -25,8 +25,8 @@
   ]);
 
   const clickOrbit = (planet: {planet: Planet, html?: HTMLElement}) => {
-    if (elementToPlace) {
-      $player.planets[hoveredOrbit] = planet;
+    if (elementToPlace && isPlanet(elementToPlace)) {
+      $player.planets[hoveredOrbit] = {planet: elementToPlace};
       elementToPlace = undefined;
       hoveredOrbit = -1;
     }
@@ -35,6 +35,7 @@
   const triggerPlanetAbility = (planet: {planet: Planet, html?: HTMLElement}) => {
     $player.points += Ability[planet.planet.ability](planet, $player);
   };
+  const increasePoints = () => $player.points++;
 
   const updateDatabase = async () => {
     if ($player.user.email) {
@@ -52,8 +53,7 @@
 
   $: $player.planets.forEach(planet => {
     if (planet.html) {
-      console.log('add event listener for', planet.planet.name);
-      // planet.html.addEventListener('animationiteration', () => triggerPlanetAbility(planet));
+      planet.html.addEventListener('animationiteration', increasePoints);
     }
   });
 
@@ -65,11 +65,12 @@
 
 <div class="background">
     <button on:click={() => {playing = !playing}}>
-        {playing ? 'Playing...' : 'Start'} {elementToPlace?.name || ''}
+        {playing ? 'Points: ' + ($player.points || 0) : 'Start'}
     </button>
     <div class="stars">
         <div class="star"></div>
     </div>
+    <div class="instructions">{elementToPlace ? 'Select orbit to place ' + elementToPlace.name + ' on' : ''}</div>
 
     <div class="planets">
         <div class="sun" bind:this={sun}></div>
@@ -110,10 +111,14 @@
       font-size: 64px;
       color: white;
       position: fixed;
+      background-color: #222222;
     }
 
-    button {
-      background-color: #222222;
+    .instructions {
+      font-size: 64px;
+      color: white;
+      position: fixed;
+      left: 25%;
     }
 
     .planets {
